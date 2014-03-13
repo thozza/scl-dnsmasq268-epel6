@@ -1,0 +1,15 @@
+diff --git a/src/config.h b/src/config.h
+index 60de687..fc76072 100644
+--- a/src/config.h
++++ b/src/config.h
+@@ -140,6 +140,10 @@ RESOLVFILE
+ /* #define HAVE_IDN */
+ /* #define HAVE_CONNTRACK */
+ 
++/* #define LEASEFILE */
++/* #define CONFFILE */
++/* #define RUNFILE */
++
+ 
+ /* Default locations for important system files. */
+ 

@@ -1,0 +1,99 @@
+#!/bin/sh
+#
+# Startup script for the DNS caching server
+#
+# chkconfig: - 49 50
+# description: This script starts your DNS caching server
+# processname: dnsmasq
+# pidfile: /var/run/dnsmasq.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 0
+
+DNSMASQ="/usr/sbin/dnsmasq"
+PIDFILE="/var/run/dnsmasq.pid"
+
+DOMAIN_SUFFIX=`dnsdomainname 2> /dev/null`
+if [ ! -z "${DOMAIN_SUFFIX}" ]; then
+  OPTIONS="-s $DOMAIN_SUFFIX"
+fi
+
+RETVAL=0
+
+# We have to re-enable SCL environment, because /sbin/service
+# clears almost all environment variables.
+# Since X_SCLS is cleared as well, we lose information about other
+# collections enabled.
+source __SCL_SCRIPTS__/service-environment
+source scl_source enable $DNSMASQ268_SCLS_ENABLED
+
+# we want start daemon only inside "scl enable" invocation
+if ! scl_enabled __SCL_NAME__ ; then
+    echo "Collection __SCL_NAME__ has to be listed in __SCL_SCRIPTS__/service-environment"
+    exit 1
+fi
+
+
+# See how we were called.
+case "$1" in
+  start)
+        if [ $UID -ne 0 ] ; then
+            echo "User has insufficient privilege."
+            exit 4
+        fi
+        echo -n "Starting __SCL_NAME__: "
+        daemon $DNSMASQ $OPTIONS
+        RETVAL=$?
+        echo
+        ;;
+  stop)
+        if test "x`pidofproc -p $PIDFILE $DNSMASQ`" != x; then
+            echo -n "Shutting down __SCL_NAME__: "
+            killproc $DNSMASQ
+            RETVAL=$?
+            echo
+        fi
+        ;;
+  status)
+        status -p $PIDFILE $DNSMASQ
+        RETVAL=$?
+        ;;
+  reload)
+        if test "x`pidofproc -p $PIDFILE $DNSMASQ`" != x; then
+                echo -n "Reloading __SCL_NAME__: "
+                killproc $DNSMASQ -HUP
+                RETVAL=$?
+                echo
+        fi
+        ;;
+  force-reload)
+        # new configuration takes effect only after restart
+        $0 stop
+        $0 start
+        RETVAL=$?
+        ;;
+  restart)
+        $0 stop
+        $0 start
+        RETVAL=$?
+        ;;
+  condrestart)
+        if test "x`pidofproc -p $PIDFILE $DNSMASQ`" != x; then
+                $0 stop
+                $0 start
+                RETVAL=$?
+        fi
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart|reload|condrestart|status}"
+        exit 2
+esac
+
+exit $RETVAL
+
