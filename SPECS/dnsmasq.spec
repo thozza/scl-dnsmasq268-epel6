@@ -103,7 +103,7 @@ rm -rf $RPM_BUILD_ROOT
 # normally i'd do 'make install'...it's a bit messy, though
 mkdir -p $RPM_BUILD_ROOT%{_sbindir} \
         $RPM_BUILD_ROOT%{_mandir}/man8 \
-        $RPM_BUILD_ROOT%{_sharedstatedir}/dnsmasq \
+        $RPM_BUILD_ROOT%{_localstatedir}/lib/dnsmasq \
         $RPM_BUILD_ROOT%{_sysconfdir}/dnsmasq.d \
         $RPM_BUILD_ROOT%{?scl:%_root_sysconfdir}%{!?scl:%_sysconfdir}/dbus-1/system.d
 install src/dnsmasq $RPM_BUILD_ROOT%{_sbindir}/dnsmasq
