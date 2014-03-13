@@ -75,7 +75,7 @@ sed -i -r -e "s|__SCL_NAME__|%{?scl}|g" \
 for file in dnsmasq.conf.example man/dnsmasq.8 man/es/dnsmasq.8 src/config.h; do
     sed -i 's|/var/lib/misc/dnsmasq.leases|%{_localstatedir}/lib/dnsmasq/dnsmasq.leases|g' "$file"
     sed -i 's|/var/run/dnsmasq.pid|%{_localstatedir}/run/dnsmasq.pid|g' "$file"
-    sed -i 's|/etc/dnsmasq.conf|%{_sysconfdir}/dnsmasq.conf|g' "$file"
+    sed -i 's| /etc/dnsmasq.conf| %{_sysconfdir}/dnsmasq.conf|g' "$file"
 done
 
 #enable dbus
